@@ -1,0 +1,27 @@
+{
+  "name": "crud-task-api",
+  "version": "1.0.0",
+  "description": "crud-task-api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neriosoft/crud-task-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neriosoft/crud-task-api/issues"
+  },
+  "homepage": "https://github.com/neriosoft/crud-task-api#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mongoose": "^6.2.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
