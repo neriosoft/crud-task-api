@@ -6,13 +6,12 @@ const TaskList = require('./database/models/tasklist');
 const Task = require('./database/models/task');
 
 /*
-CORS - Cross Origin Request Security
+####################################################################
+CORS - Cross Origin Request Security | 3rd party - app.use(cors());
 Backend - http://localhost:3000
 Frontend - http://localhost:4200
-
-3rd party - app.use(cors());
+####################################################################
 */
-
 app.use((req, res, next) => {
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:4200');
@@ -28,11 +27,12 @@ app.use((req, res, next) => {
 //next middleware
 app.use(express.json());  // or 3rd party library - bodyParser
 
-
 /*
-Routes of REST API endpoints/RESTFUL webservices
+###############################################
+REST API endpoints/RESTFUL webservices
 TaskList routes - Create, Update. ReadTaskListById, ReadAlltaskList
 Task - Create, Update. ReadTaskById, ReadAlltask
+###############################################
 */
 
 //select all tasklist
@@ -46,7 +46,11 @@ app.get('/tasklists', (req,res) => {
     });
 });
 
-//fetch a task by id
+/*
+############################
+  Fetch a task by id
+############################
+*/
 app.get('/tasklists/:tasklistId', (req, res) => {
     let tasklistId = req.params.tasklistId;
     TaskList.find({_id: tasklistId})
@@ -60,7 +64,12 @@ app.get('/tasklists/:tasklistId', (req, res) => {
   }
 );
 
-//full update
+/*
+############################
+  Full Update
+############################
+*/
+
 app.put('/tasklists/:tasklistId', (req, res) => {
   TaskList.findOneAndUpdate({_id: req.params.tasklistId}, {$set: req.body})
   .then((taskList) => {
@@ -72,8 +81,12 @@ app.put('/tasklists/:tasklistId', (req, res) => {
   })
 });
 
-//patial update
-app.put('/tasklists/:tasklistId', (req, res) => {
+/*
+############################
+  Patial Update
+############################
+*/
+app.patch('/tasklists/:tasklistId', (req, res) => {
   TaskList.findOneAndUpdate({_id: req.params.tasklistId}, {$set: req.body})
   .then((taskList) => {
     res.status(200).send(taskList)
@@ -83,8 +96,11 @@ app.put('/tasklists/:tasklistId', (req, res) => {
 
   })
 });
-
-//Delete tasklist by id
+/*
+############################
+  Delete tasklist by id
+############################
+*/
 app.delete('/tasklists/:tasklistId', (req, res) => {
   TaskList.findByIdAndDelete( req.params.tasklistId )
   .then((taskList) => {
@@ -95,9 +111,11 @@ app.delete('/tasklists/:tasklistId', (req, res) => {
 
   })
 });
-
-
-//create tasklist
+/*
+############################
+ create tasklist
+############################
+*/
 app.post('/tasklists',(req, res) => {
   //console.log('This is post request on tasklist')
   let taskListObject = { 'title': req.body.title};
@@ -109,7 +127,73 @@ app.post('/tasklists',(req, res) => {
     console.log(error);
     res.status(500);
   })
+});
+/*
+###########################################################
+CRUD Operation for task. A task should belong to a tasklist
+###########################################################
+*/
+//All task
+app.get('/tasklists/:tasklistId/tasks', (req,res) => {
+    Task.find({_taskListId: req.params.tasklistId})
+    .then((tasks) => {
+      res.status(201).send(tasks)
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500);
+    })
 })
+
+//Create a task
+app.post('/tasklists/:tasklistId/tasks',(req, res) => {
+  //console.log('This is post request on tasklist')
+  let taskObject = { 'title': req.body.title, '_taskListId':req.params.tasklistId};
+  Task(taskObject).save()
+  .then((task) => {
+    res.status(201).send(task)
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500);
+  })
+});
+
+//One task within a tasklist
+app.get('/tasklists/:tasklistId/tasks/:taskId', (req,res) => {
+  Task.findOne({_taskListId: req.params.tasklistId, _id: req.params.taskId})
+  .then((task) => {
+    res.status(201).send(task)
+  })
+  .catch((error) => {
+    console.log(error);
+    res.status(500);
+  })
+})
+
+//Update one task belonging to a tasklist
+app.patch('/tasklists/:tasklistId/tasks/:taskId', (req, res) => {
+  Task.findOneAndUpdate({_taskListId: req.params.tasklistId, _id: req.params.taskId}, {$set: req.body})
+  .then((task) => {
+    res.status(200).send(task)
+  })
+  .catch((error) => {
+    console.log(error);
+
+  })
+});
+
+//find one task belonging to a tasklist and delete
+app.delete('/tasklists/:tasklistId/tasks/:taskId', (req, res) => {
+  Task.findOneAndDelete({_taskListId: req.params.tasklistId, _id: req.params.taskId})
+  .then((task) => {
+    res.status(200).send(task)
+  })
+  .catch((error) => {
+    console.log(error);
+
+  })
+});
 
 app.listen(3000, ()=> console.log('Server started on port 3000')
 );

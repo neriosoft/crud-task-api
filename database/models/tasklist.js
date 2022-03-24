@@ -7,7 +7,5 @@ const TaskListSchema = new mongoose.Schema({
         minlength: 3
     }
 });
-
 const TaskList = mongoose.model('TaskList',TaskListSchema);
-
 module.exports = TaskList;
